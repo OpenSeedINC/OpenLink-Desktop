@@ -37,7 +37,7 @@ Item {
 
     onStatusChanged: {
         var stat = JSON.parse(status)
-        last_seen = stat["date"]
+            last_seen = stat["date"]
         switch (stat["data"]["chat"]) {
         case "Online":
             chat_status = 1
