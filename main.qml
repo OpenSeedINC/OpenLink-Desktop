@@ -23,9 +23,7 @@ ApplicationWindow {
     property var collected: []
     property bool connections_done: false
 
-    property string devId: ""
-    property string devPub:""
-    property string appId: ""
+
 
     property string userid
     property string username

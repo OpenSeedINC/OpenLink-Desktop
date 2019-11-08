@@ -1,4 +1,4 @@
-QT += quick svg sql
+QT += quick svg sql core
 
 CONFIG += c++11
 

@@ -617,7 +617,6 @@ function updates(userid, username, type, last) {
                 }
 
                 if (type === "chat") {
-                    //print(raw.trim())
                     var returned = JSON.parse(raw.trim())
                     var loc = false
                     if (returned["type"] === userid) {
@@ -665,8 +664,10 @@ function send_chat(username1, username2, message) {
     if (ekey == "") {
         ekey = load_key(username1, username2)
     }
+
     var secret =simp_crypt(ekey, message)
-    //var secret = " "+message+" "
+
+    //var secret = ""+message+""
     var http = new XMLHttpRequest()
     var url = "https://api.openseed.solutions/chats.py"
     var raw = ""
@@ -878,9 +879,18 @@ function simp_crypt(key,raw_data) {
     var secret = ""
     var datanum = 0
     var offset = 0
-    var data = raw_data.toString().replace(/%/g, ":percent:").replace(/&/g, ":ampersand:")
-    print(data)
+    var data = raw_data.replace(/%/g, ":percent:").replace(/&/g, ":ampersand:")
+    var tdata = raw_data.trim()
     var digits = ""
+    for(var t in raw_data) {
+        var c = raw_data.charCodeAt(t)
+        if(c < 128) {
+            digits += raw_data[t]
+        } else {
+            digits +=raw_data[t]+raw_data[t+1]
+         }
+    }
+    //var data = digits
     //lets turn it into integers first//
 
     while (datanum < data.length) {
@@ -894,10 +904,9 @@ function simp_crypt(key,raw_data) {
                     while (num < key.length) {
                         secret = secret + key[num]
                         num += 1
-                        print(data[datanum], key[num])
                         if (data[datanum] !== key[num]) {
                             keynum = num
-                            secret = secret + data[datanum]
+                            secret = secret+data[datanum]
                             print("shifting by:" + keynum)
                             break
                         } else {
@@ -906,7 +915,7 @@ function simp_crypt(key,raw_data) {
                     }
                     //secret = secret+data[datanum]
                 } else {
-                    secret = secret + data[datanum]
+                    secret = secret+data[datanum]
                 }
                 datanum += 1
             } else {
@@ -920,7 +929,7 @@ function simp_crypt(key,raw_data) {
             keynum += 1
         }
     }
-    return secret
+    return secret.replace(/:percent:/g, "%").replace(/:ampersand:/g, "&")
 }
 
 function simp_decrypt(key, raw_data) {
@@ -928,14 +937,14 @@ function simp_decrypt(key, raw_data) {
     var message = ""
     var datanum = 0
     var offset = 0
-    var  data = decodeURI(
+    /*var data = decodeURI(
                 raw_data.replace(/%3A/g,":")
                 .replace(/%2C/g,",").replace(/%7B/g,"{")
                 .replace(/%22/g,'"').replace(/%7D/g, "}")
                 .replace(/%40/g, "@").replace(/%3F/g, "?")
                 .replace(/%23/g, "#").replace(/%24/g, "$")
-                .replace(/%3D/g, "=").replace(/%25/g, "%"))
-
+                .replace(/%3D/g, "=").replace(/%25/g, "%")) */
+    var data = raw_data
 
     if (key_stretch !== "") {
         if (data.length > key_stretch.length) {
@@ -955,9 +964,10 @@ function simp_decrypt(key, raw_data) {
             datanum = datanum + 1
         }
     } else {
-        message = data
+        message = "Unable to Decrypt"
     }
-    return message.replace(":percent:", "%").replace(":ampersand:", "&")
+
+    return message
 }
 
 function openseed_search(username) {

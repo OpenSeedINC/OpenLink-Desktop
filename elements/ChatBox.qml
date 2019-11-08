@@ -72,6 +72,7 @@ Item {
             }
             width:parent.width
             fillMode: Image.PreserveAspectFit
+
             visible: {
                 var formats = ["gif","jpeg","jpg","png"]
                 for(var num in formats) {
